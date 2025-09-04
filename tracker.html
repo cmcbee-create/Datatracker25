@@ -1,0 +1,115 @@
+<script>
+    let teacherMode = false;
+
+    // Save all form + score data to localStorage
+    function saveData() {
+        if (teacherMode) return; // disable saving in teacher mode
+        const data = {
+            studentName: document.getElementById("studentName").value,
+            studentClass: document.getElementById("studentClass").value,
+            teacherName: document.getElementById("teacherName").value,
+            careerGoal: document.getElementById("careerGoal").value,
+            academicGoal: document.getElementById("academicGoal").value,
+            checkins: [
+                { date: document.getElementById("checkin1Date").value, text: document.getElementById("checkin1").value },
+                { date: document.getElementById("checkin2Date").value, text: document.getElementById("checkin2").value },
+                { date: document.getElementById("checkin3Date").value, text: document.getElementById("checkin3").value }
+            ],
+            testNames,
+            assessmentData
+        };
+        localStorage.setItem("studentTrackerData", JSON.stringify(data));
+        alert("✅ Data saved locally!");
+    }
+
+    // Load data from localStorage
+    function loadData() {
+        const saved = localStorage.getItem("studentTrackerData");
+        if (!saved) return;
+        const data = JSON.parse(saved);
+
+        document.getElementById("studentName").value = data.studentName || "";
+        document.getElementById("studentClass").value = data.studentClass || "";
+        document.getElementById("teacherName").value = data.teacherName || "";
+        document.getElementById("careerGoal").value = data.careerGoal || "";
+        document.getElementById("academicGoal").value = data.academicGoal || "";
+
+        if (data.checkins) {
+            document.getElementById("checkin1Date").value = data.checkins[0]?.date || "";
+            document.getElementById("checkin1").value = data.checkins[0]?.text || "";
+            document.getElementById("checkin2Date").value = data.checkins[1]?.date || "";
+            document.getElementById("checkin2").value = data.checkins[1]?.text || "";
+            document.getElementById("checkin3Date").value = data.checkins[2]?.date || "";
+            document.getElementById("checkin3").value = data.checkins[2]?.text || "";
+        }
+
+        if (data.testNames) testNames = data.testNames;
+        if (data.assessmentData) assessmentData = data.assessmentData;
+
+        updateChart();
+        for (let i = 0; i < assessmentData.length; i++) {
+            updatePerformanceCategory(i, assessmentData[i]);
+        }
+    }
+
+    // Generate a shareable link with encoded data
+    function generateShareLink() {
+        if (teacherMode) return; // teachers don’t generate links
+        const data = localStorage.getItem("studentTrackerData");
+        if (!data) {
+            alert("⚠️ Please save your data first.");
+            return;
+        }
+        const encoded = encodeURIComponent(btoa(data));
+        const link = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+        prompt("📎 Copy this link and send it to your teacher:", link);
+
+        const teacherLink = `${link}&view=teacher`;
+        console.log("👩‍🏫 Teacher View Link:", teacherLink);
+    }
+
+    // Load data from a share link (if ?data= exists in URL)
+    function loadFromLink() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("data")) {
+            const decoded = atob(decodeURIComponent(params.get("data")));
+            localStorage.setItem("studentTrackerData", decoded);
+        }
+        if (params.get("view") === "teacher") {
+            teacherMode = true;
+        }
+    }
+
+    // Add Save & Share buttons (only if not teacher)
+    function addButtons() {
+        if (teacherMode) return;
+        const container = document.querySelector(".content");
+        const btnBox = document.createElement("div");
+        btnBox.style.margin = "20px 0";
+        btnBox.innerHTML = `
+            <button onclick="saveData()" style="padding:10px 20px; margin-right:10px; border:none; border-radius:8px; background:#4facfe; color:white; font-weight:bold; cursor:pointer;">💾 Save Progress</button>
+            <button onclick="generateShareLink()" style="padding:10px 20px; border:none; border-radius:8px; background:#16a34a; color:white; font-weight:bold; cursor:pointer;">🔗 Get Share Link</button>
+        `;
+        container.prepend(btnBox);
+    }
+
+    // Make fields read-only in teacher mode
+    function setReadOnlyMode() {
+        if (!teacherMode) return;
+        document.querySelectorAll("input, textarea").forEach(el => {
+            el.disabled = true;
+            el.style.backgroundColor = "#f3f4f6"; // light gray
+            el.style.cursor = "not-allowed";
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        loadFromLink();
+        generateAssessmentTable();
+        initChart();
+        setupEventListeners();
+        loadData();
+        addButtons();
+        setReadOnlyMode();
+    });
+</script>
