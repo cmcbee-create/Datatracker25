@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Data Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* --- Your existing CSS from template --- */
+* {margin:0;padding:0;box-sizing:border-box;}
+body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+.container {max-width:1200px;margin:0 auto;background:white;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.1);overflow:hidden;}
+.header {background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;padding:30px;text-align:center;}
+.header h1 {font-size:2.5rem;margin-bottom:10px;font-weight:700;}
+.content {padding:30px;}
+/* --- add the rest of your CSS here (from your template) --- */
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📊 Student Data Tracker</h1>
+        <p>Track academic progress and goals</p>
+    </div>
+
+    <div class="content">
+        <!-- Buttons will be added by JavaScript -->
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <h2 class="section-title">👤 Student Profile</h2>
+            <div class="profile-grid">
+                <div class="profile-item"><label for="studentName">Student Name</label><input type="text" id="studentName" placeholder="Enter student name"></div>
+                <div class="profile-item"><label for="studentClass">Class</label><input type="text" id="studentClass" placeholder="Enter class"></div>
+                <div class="profile-item"><label for="teacherName">Teacher</label><input type="text" id="teacherName" placeholder="Enter teacher name"></div>
+                <div class="profile-item"><label for="careerGoal">Career Goal</label><input type="text" id="careerGoal" placeholder="Enter career goal"></div>
+            </div>
+            <div class="profile-item">
+                <label for="academicGoal">Academic SMART Goal</label>
+                <textarea id="academicGoal" rows="3" placeholder="Enter specific, measurable, achievable, relevant, and time-bound academic goal"></textarea>
+            </div>
+        </div>
+
+        <!-- Check-in Section -->
+        <div class="checkin-section">
+            <h2 class="section-title">✅ Goal Check-ins</h2>
+            <div class="checkin-grid">
+                <div class="checkin-card">
+                    <h4>Check-in #1</h4>
+                    <div class="checkin-date"><label>Date:</label><input type="date" id="checkin1Date"></div>
+                    <textarea class="checkin-response" id="checkin1" placeholder="How are you progressing toward your academic goal?"></textarea>
+                </div>
+                <div class="checkin-card">
+                    <h4>Check-in #2</h4>
+                    <div class="checkin-date"><label>Date:</label><input type="date" id="checkin2Date"></div>
+                    <textarea class="checkin-response" id="checkin2" placeholder="What challenges have you faced?"></textarea>
+                </div>
+                <div class="checkin-card">
+                    <h4>Check-in #3</h4>
+                    <div class="checkin-date"><label>Date:</label><input type="date" id="checkin3Date"></div>
+                    <textarea class="checkin-response" id="checkin3" placeholder="Are you on track to meet your goal?"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <h2 class="section-title">📈 Assessment Performance</h2>
+            <div class="average-display">
+                <h3>Cumulative Average (Excluding STAAR)</h3>
+                <div class="average-score" id="averageScore">0%</div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background-color: #eab308;"></div><span>Did Not Meet Low (0-30.9%)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #ca8a04;"></div><span>Did Not Meet High (31-42.9%)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #a855f7;"></div><span>Approaches Low (43-48.9%)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #7c3aed;"></div><span>Approaches High (49-56.9%)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #3b82f6;"></div><span>Meets (57-83.9%)</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #16a34a;"></div><span>Masters (84-100%)</span></div>
+            </div>
+            <div class="chart-container"><canvas id="assessmentChart" width="400" height="200"></canvas></div>
+        </div>
+
+        <!-- Tables Section -->
+        <div class="tables-section">
+            <div class="table-container">
+                <h3>🎯 Last Year's STAAR Test Results</h3>
+                <table>
+                    <thead><tr><th>Subject</th><th>Percentage Score</th><th>Date</th><th>Performance Category</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>STAAR Reading</td>
+                            <td><input type="number" min="0" max="100" class="staar-score" data-index="0" placeholder="0-100"></td>
+                            <td><input type="date" class="staar-date" data-index="0"></td>
+                            <td><span class="performance-category" data-index="0">-</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-container">
+                <h3>📝 Other Assessments</h3>
+                <table>
+                    <thead><tr
